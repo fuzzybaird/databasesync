@@ -1,9 +1,4 @@
 <?php
-Route::get('/', function () {
-    $tables = DB::select('SHOW TABLES');
-    $tablesAndColumns = [];
-    foreach ($tables as $table) {
-    	$tablesAndColumns[$table->Tables_in_givinggame] = DB::getSchemaBuilder()->getColumnListing($table->Tables_in_givinggame);
-    }
-    dd($tablesAndColumns);
-});
+// use Fuzzybaird\Databasesync\Classes\ColumnsAndTables;
+use Fuzzybaird\Databasesync\Classes\Diff;
+Route::get('/', 'Fuzzybaird\Databasesync\Http\Controllers\SyncController@index');

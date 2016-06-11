@@ -89,9 +89,6 @@ class Plugin extends PluginBase
         ];
     }
 
-    public function getTablesOptions()
-    {
-        return ['au' => 'Australia', 'ca' => 'Canada'];
-    }
+
 
 }
