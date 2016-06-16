@@ -27,6 +27,7 @@ class Diff
 
 	public function convertJsonArray($array)
 	{
+		// dd($array);
 		$jsonArray = [];
 		foreach ($array as $key => $value) {
 			// dd($value[0]->name);

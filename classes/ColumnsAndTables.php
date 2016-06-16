@@ -15,6 +15,7 @@ class ColumnsAndTables
 	function __construct()
 	{
 		$this->all = self::all();
+		// dd($this->all);
 	}
 
 
@@ -58,22 +59,28 @@ class ColumnsAndTables
 	 */
 	public function selectTables($array)
 	{
+		// dd($array);
+		if (gettype($array) == 'string') {
+			$array = [$array];
+		}
+		// dd($array);
 		$matched = [];
 		foreach ($array as $value) {
 			$matched[$value] = $this->all[$value];
 		}
 		$this->selectedTables = $matched;
+		// dd($this->selectedTables);
 		return $this;
 	}
 
-	public function fetchData()
+	public function fetch()
 	{
 		$array = [];
 		foreach ($this->selectedTables as $key => $table) {
 			$array[$key] = DB::table($key)->get();
 		}
-		$this->tablesWithData = $array;
-		return $this;
+		// $this->tablesWithData = $array;
+		return $array;
 	}
 
 }

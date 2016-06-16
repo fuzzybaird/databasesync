@@ -1,6 +1,7 @@
 <?php namespace Fuzzybaird\DatabaseSync\Models;
 
 use Model;
+use Config;
 use DB;
 
 class Settings extends Model
@@ -13,29 +14,20 @@ class Settings extends Model
     // Reference to field configuration
     public $settingsFields = 'fields.yaml';
 
+    private $database_name;
+
+
+
     public function getTablesOptions()
     {
-    	$tables = DB::select('SHOW TABLES');
-    	$tablesAndColumns = [];
-    	foreach ($tables as $table) {
-    		$tablesAndColumns[$table->Tables_in_givinggame] = $table->Tables_in_givinggame;
-    	}
-    	//DB::getSchemaBuilder()->getColumnListing($table->Tables_in_givinggame)
-        return $tablesAndColumns;
-    }
-    public function getColumnsOptions()
-    {
-    	$allcolumns = [];
-    	if ($this->tables) {
-    		foreach ($this->tables as $table) {
-    			$columns = DB::getSchemaBuilder()->getColumnListing($table);
-    			foreach ($columns as $column) {
-    				$allcolumns[$table.':'.$column] = $table.': '.$column;
-    			}
-    		}
-    	}
 
-    	// dd($columns);
-    	return $allcolumns;
+        $database_name = 'Tables_in_'.Config::get('database.connections.'.Config::get('database.default').'.database');
+    	$tables = DB::select('SHOW TABLES');
+    	$tables = array_flatten($tables);
+        $newtables = [];
+    	foreach ($tables as $key => $value) {
+    		$newtables[$value->$database_name] = $value->$database_name;
+    	}
+        return $newtables;
     }
 }

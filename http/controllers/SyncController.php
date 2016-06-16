@@ -19,13 +19,11 @@ class SyncController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Settings $settings, ColumnsAndTables $ColumnsAndTables,Diff $diff)
     {
-    	$settingsTables = with(new Settings)->get('tables');
-    	$settingsTables = array_shift($settingsTables);
-        $stuff = new ColumnsAndTables;
-        $tables = $stuff->selectTables($settingsTables)->fetchData()->getTablesWithData();
-        $diff = new Diff;
+    	$settingsTables = $settings->get('tables');
+        $tables = $ColumnsAndTables->selectTables($settingsTables)->fetch();
+        dd($tables);
         dd($diff->convertJsonArray($tables));
         return $tables;
     }

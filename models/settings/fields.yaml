@@ -7,9 +7,3 @@ fields:
         label: Tables to Sync
         description: What tables will automatically sync
         type: checkboxlist
-
-    columns:
-        label: Columns to Sync
-        description: More granular sync settings
-        type: checkboxlist
-        dependsOn: tables
