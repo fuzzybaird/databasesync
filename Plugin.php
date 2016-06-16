@@ -1,5 +1,5 @@
 <?php namespace Fuzzybaird\DatabaseSync;
-
+use Config;
 use Backend;
 use System\Classes\PluginBase;
 
@@ -89,6 +89,13 @@ class Plugin extends PluginBase
         ];
     }
 
-
+    public function boot(){
+        $options  = [
+            'driver' => 'local',
+            'root'   => __DIR__.'/tmp',
+        ];
+        Config::set('filesystems.disks.fuzzybaird_databasesync', $options);
+        // dd(Config::get('filesystems.disks'));
+    }
 
 }

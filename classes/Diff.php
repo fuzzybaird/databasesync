@@ -1,5 +1,7 @@
 <?php namespace Fuzzybaird\Databasesync\Classes;
-
+use cogpowered\FineDiff\Render\Text;
+use cogpowered\FineDiff\Diff;
+use Storage;
 use Config;
 use DB;
 
@@ -9,6 +11,20 @@ class Diff
 	private $tableHash;
 	function __construct()
 	{
+
+	}
+
+	public function keyValue($array)
+	{	
+		if ($array) {
+			$newarray = [];
+			foreach ($array as $key => $value) {
+				$newarray[$value] = $value;
+			}
+			return $newarray;
+		} else {
+			return [];
+		}
 
 	}
 
@@ -25,15 +41,45 @@ class Diff
 		
 	}
 
-	public function convertJsonArray($array)
-	{
-		// dd($array);
-		$jsonArray = [];
-		foreach ($array as $key => $value) {
-			// dd($value[0]->name);
-			$jsonArray[$key] = json_encode($value);
+	public function updateFolders($array)
+	{	
+		$array = $this->keyValue($array);	
+		$dir = $this->keyValue(Storage::disk('fuzzybaird_databasesync')->directories('.'));
+		$deletes = array_except($dir, $array);
+		if ($deletes) {
+			foreach ($deletes as $value) {
+				Storage::disk('fuzzybaird_databasesync')->deleteDirectory($value);
+			}
 		}
-		$this->tablesWithJson = $jsonArray;
-		return $jsonArray;
+
+		foreach ($array as $key => $value) {
+			Storage::disk('fuzzybaird_databasesync')->makeDirectory($value);
+			Storage::disk('fuzzybaird_databasesync')->makeDirectory($value.'/fowards');
+			Storage::disk('fuzzybaird_databasesync')->makeDirectory($value.'/backwards');
+			Storage::disk('fuzzybaird_databasesync')->makeDirectory($value.'/states');
+		}
+		return $array;
+	}
+
+	public function setStates($array)
+	{
+		Storage::disk('fuzzybaird_databasesync')->allFiles();
+		foreach ($array as $key => $value) {
+			// dd($key.'/states/'.time().'_'.$key);
+			
+			Storage::disk('fuzzybaird_databasesync')->put($key.'/states/'.time().'_'.$key.'.json', json_encode($value));
+		}
+	}
+
+	public function compareStates($tables)
+	{
+		foreach ($tables as $key => $value) {
+
+			// dd($key.'/states');
+			$file = Storage::disk('fuzzybaird_databasesync')->files($key.'/states');
+			dd($file);	
+			$old = Storage::disk('fuzzybaird_databasesync')->get($file);
+			dd($old);
+		}
 	}
 }

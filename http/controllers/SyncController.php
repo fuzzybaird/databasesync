@@ -22,10 +22,23 @@ class SyncController extends Controller
     public function index(Settings $settings, ColumnsAndTables $ColumnsAndTables,Diff $diff)
     {
     	$settingsTables = $settings->get('tables');
+        if($settingsTables){
+        $diff->updateFolders($settingsTables);
+        
+        
+        } else {
+            $diff->updateFolders($settingsTables);
+            return ['error'=>'no tables to sync'];
+        }
+    }
+
+    public function checkState(Settings $settings,ColumnsAndTables $ColumnsAndTables,Diff $diff)
+    {
+        $settingsTables = $settings->get('tables');
         $tables = $ColumnsAndTables->selectTables($settingsTables)->fetch();
-        dd($tables);
-        dd($diff->convertJsonArray($tables));
-        return $tables;
+        $diff->compareStates($tables);
+        // dd($tables);
+        $diff->setStates($tables);
     }
 
 }
