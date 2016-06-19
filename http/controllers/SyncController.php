@@ -36,8 +36,9 @@ class SyncController extends Controller
     {
         $settingsTables = $settings->get('tables');
         $tables = $ColumnsAndTables->selectTables($settingsTables)->fetch();
-        $diff->compareStates($tables);
         // dd($tables);
+        $diff->compareStates($tables);
+        dd($tables);
         $diff->setStates($tables);
     }
 

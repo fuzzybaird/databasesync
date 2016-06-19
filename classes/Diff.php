@@ -63,10 +63,8 @@ class Diff
 
 	public function setStates($array)
 	{
-		Storage::disk('fuzzybaird_databasesync')->allFiles();
 		foreach ($array as $key => $value) {
 			// dd($key.'/states/'.time().'_'.$key);
-			
 			Storage::disk('fuzzybaird_databasesync')->put($key.'/states/'.time().'_'.$key.'.json', json_encode($value));
 		}
 	}
@@ -75,11 +73,11 @@ class Diff
 	{
 		foreach ($tables as $key => $value) {
 
-			// dd($key.'/states');
+			// Diff::
 			$file = Storage::disk('fuzzybaird_databasesync')->files($key.'/states');
-			dd($file);	
-			$old = Storage::disk('fuzzybaird_databasesync')->get($file);
-			dd($old);
+			
+			$old = Storage::disk('fuzzybaird_databasesync')->get($key.'/'.$file);
+			// dd($old);
 		}
 	}
 }
