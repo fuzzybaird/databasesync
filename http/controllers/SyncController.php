@@ -4,16 +4,12 @@ use Illuminate\Routing\Controller;
 use Fuzzybaird\Databasesync\Classes\ColumnsAndTables;
 use Fuzzybaird\Databasesync\Classes\FuzzyDiff;
 use Fuzzybaird\Databasesync\Models\Settings;
+
 class SyncController extends Controller
 {
+public $diff;
 
-    private $FuzzyDiff;
 
-    public function __construct()
-    {
-        // $this->middleware('guest');
-        // $this->$FuzzyDiff = new FuzzyDiff;
-    }
 
     /**
      * Show the application welcome screen to the user.
@@ -22,29 +18,30 @@ class SyncController extends Controller
      */
     public function index(Settings $settings, ColumnsAndTables $ColumnsAndTables)
     {
-    	// $settingsTables = $settings->get('tables');
-        $this->$FuzzyDiff = new FuzzyDiff;// 
-        dd('still works');
-     //    if($settingsTables){
-     //        $fuzzydiff->updateFolders($settingsTables);
-     //        $tables = $ColumnsAndTables->selectTables($settingsTables)->fetch();
-     //        $fuzzydiff = $fuzzydiff->newState($tables);
-     //        return [$tables, $fuzzydiff];
-     //    } else {
-     //        $fuzzydiff->updateFolders($settingsTables);
-     //        return ['error'=>'no tables to sync'];
-     //    }
+    	$settingsTables = $settings->get('tables');
+        // dd('still works');
+        if($settingsTables){
+            $diff = new FuzzyDiff;
+            // dd($diff);
+            $diff->updateFolders($settingsTables);
+            $tables = $ColumnsAndTables->selectTables($settingsTables)->fetch();
+
+            $diff = $diff->newState($tables);
+            return [$tables, $diff];
+        } else {
+            $diff->updateFolders($settingsTables);
+            return ['error'=>'no tables to sync'];
+        }
     }
 
-    // public function checkState(Settings $settings,ColumnsAndTables $ColumnsAndTables,Diff $fuzzydiff)
-    // {
-    //     $settingsTables = $settings->get('tables');
-    //     $tables = $ColumnsAndTables->selectTables($settingsTables)->fetch();
-    //     // dd($tables);
-    //     $fuzzydiff->compareStates($tables);
-    //     dd($tables);
-    //     $fuzzydiff->newStates($tables);
-    // }
+    public function checkState(Settings $settings,ColumnsAndTables $ColumnsAndTables, FuzzyDiff $diff)
+    {
+        $settingsTables = $settings->get('tables');
+        $tables = $ColumnsAndTables->selectTables($settingsTables)->fetch();
+        // dd($tables);
+        $diff->compareStates($tables);
+        dd($tables);
+        $diff->newStates($tables);
+    }
 
 }
-	// dd('hello');

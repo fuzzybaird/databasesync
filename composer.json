@@ -1,5 +1,6 @@
 {
     "require": {
-        "cogpowered/finediff": "^0.3.1"
+        "cogpowered/finediff": "^0.3.1",
+        "raveren/kint": "^1.0"
     }
 }

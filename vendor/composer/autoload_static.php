@@ -6,6 +6,10 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit5ebf13c29a26ca2932c45c146a7b0ecf
 {
+    public static $files = array (
+        '6bc45d0537e6858fd179bdbc31d62c79' => __DIR__ . '/..' . '/raveren/kint/Kint.class.php',
+    );
+
     public static $prefixesPsr0 = array (
         'c' => 
         array (
