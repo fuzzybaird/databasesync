@@ -11,37 +11,47 @@ public $diff;
 
 
 
-    /**
-     * Show the application welcome screen to the user.
-     *
-     * @return Response
-     */
-    public function index(Settings $settings, ColumnsAndTables $ColumnsAndTables)
-    {
-    	$settingsTables = $settings->get('tables');
-        // dd('still works');
-        if($settingsTables){
-            $diff = new FuzzyDiff;
-            // dd($diff);
-            $diff->updateFolders($settingsTables);
-            $tables = $ColumnsAndTables->selectTables($settingsTables)->fetch();
+	/**
+	 * Show the application welcome screen to the user.
+	 *
+	 * @return Response
+	 */
+	public function index(Settings $settings, ColumnsAndTables $ColumnsAndTables)
+	{
+		$settingsTables = $settings->get('tables');
+		// dd('still works');
+		if($settingsTables){
 
-            $diff = $diff->newState($tables);
-            return [$tables, $diff];
-        } else {
-            $diff->updateFolders($settingsTables);
-            return ['error'=>'no tables to sync'];
-        }
-    }
+			$diff = new FuzzyDiff;
 
-    public function checkState(Settings $settings,ColumnsAndTables $ColumnsAndTables, FuzzyDiff $diff)
-    {
-        $settingsTables = $settings->get('tables');
-        $tables = $ColumnsAndTables->selectTables($settingsTables)->fetch();
-        // dd($tables);
-        $diff->compareStates($tables);
-        dd($tables);
-        $diff->newStates($tables);
-    }
+			$diff->updateFolders($settingsTables);
+
+			$tables = $ColumnsAndTables->selectTables($settingsTables)->fetch();
+
+			$diff = $diff->newState($tables);
+
+			return [$tables, $diff];
+
+		} else {
+
+			$diff->updateFolders($settingsTables);
+
+			return ['error'=>'no tables to sync'];
+
+		}
+	}
+
+	public function checkState(Settings $settings,ColumnsAndTables $ColumnsAndTables, FuzzyDiff $diff)
+	{
+
+		$settingsTables = $settings->get('tables');
+
+		$tables = $ColumnsAndTables->selectTables($settingsTables)->fetch();
+
+		$newstate = $diff->newState($tables);
+
+		dd($newstate);
+
+	}
 
 }

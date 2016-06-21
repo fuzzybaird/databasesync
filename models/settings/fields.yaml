@@ -1,8 +1,4 @@
 fields:
-    blog_title:
-        label: Blog Title
-        description: The title for this blog
-
     tables:
         label: Tables to Sync
         description: What tables will automatically sync

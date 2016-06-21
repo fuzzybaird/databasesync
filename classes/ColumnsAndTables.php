@@ -59,12 +59,13 @@ class ColumnsAndTables
 	 */
 	public function selectTables($array)
 	{
-		// dd($array);
+		if(!$array) return $this;
 		if (gettype($array) == 'string') {
 			$array = [$array];
 		}
-		// dd($array);
+
 		$matched = [];
+
 		foreach ($array as $value) {
 			$matched[$value] = $this->all[$value];
 		}
@@ -75,6 +76,7 @@ class ColumnsAndTables
 
 	public function fetch()
 	{
+		if(!$this->selectedTables) return false;
 		$array = [];
 		foreach ($this->selectedTables as $key => $table) {
 			$array[$key] = DB::table($key)->get();
