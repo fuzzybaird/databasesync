@@ -28,7 +28,7 @@ class Opcodes implements OpcodesInterface
     /**
      * @var array Individual opcodes.
      */
-    protected $opcodes = array();
+    public $opcodes = array();
 
     /**
      * @inheritdoc

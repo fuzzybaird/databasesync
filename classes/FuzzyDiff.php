@@ -1,6 +1,11 @@
 <?php namespace Fuzzybaird\Databasesync\Classes;
+use cogpowered\FineDiff\Granularity\Character;
+use cogpowered\FineDiff\Granularity\Sentence;
+use cogpowered\FineDiff\Granularity\Comma;
+use cogpowered\FineDiff\Granularity\Word;
 use cogpowered\FineDiff\Render\Text;
 use cogpowered\FineDiff\Diff;
+use Fuzzybaird\Databasesync\Classes\treeWalker;
 use Kint;
 use Storage;
 use Config;
@@ -12,6 +17,23 @@ class FuzzyDiff
 	private $tablesWithJson;
 
 	private $tableHash;
+
+	private $treewalker;
+
+	private $diff;
+
+	private $text;
+
+	public function __construct()
+	{
+
+		$granularity = new Word;
+		$this->treewalker  = new treeWalker(['debug'=>true, 'returntype'=>'jsonstring']);
+		$this->diff        = new Diff($granularity);
+		$this->text        = new Text;
+
+	}
+
 
 
 	public function KeyKey($array) 
@@ -81,7 +103,8 @@ class FuzzyDiff
 	}
 
 	public function updateFolders($array)
-	{	
+	{
+
 		if(!$array) return ["error"=> true, "message"=>"no folders to updated"];
 
 		$array = $this->keyValue($array);	
@@ -130,8 +153,6 @@ class FuzzyDiff
 
 		$updatedTables =  $this->updateFolders($tableKeys);
 
-		dd($updatedTables);
-
 		foreach ($tables as $tableKey => $tableValue) {
 
 			if (!Storage::disk('fuzzybaird_databasesync')->exists($tableKey.'/states/'.$tableKey.'.json')) {
@@ -144,31 +165,37 @@ class FuzzyDiff
 
 				Storage::disk('fuzzybaird_databasesync')->put($tableKey.'/states/'.$tableKey.'.json', $current);
 
-				return "updated folders with initial state";
+			}
 
-			} else {
+			$old = Storage::disk('fuzzybaird_databasesync')->get($tableKey.'/states/'.$tableKey.'.json');
 
-				$diff = new Diff;
+			$old = json_decode($old);
 
-				$old = Storage::disk('fuzzybaird_databasesync')->get($tableKey.'/states/'.$tableKey.'.json');
+			$current = $tableValue;
 
-				$current = json_encode($tableValue);
+			$fowardOpcodes = $this->treewalker->getdiff($old, $old);
 
-				$Opcodes = $diff->getOpcodes($old, $current);
+			$backwardsOpcodes = $this->treewalker->getdiff($old, $current);
 
-				if ($Opcodes) {
+			dd($fowardOpcodes, $backwardsOpcodes);
 
-					$diffs[$tableKey] = $Opcodes;
+			$render = $this->text;
 
-				}
+			$change = $render->process($current, $backwardsOpcodes);
 
-				Storage::disk('fuzzybaird_databasesync')->put($tableKey.'/states/'.$tableKey.'.json', $current);
+			if ($fowardOpcodes) {
+
+				$diffs[$tableKey] = ['foward'=>json_encode($fowardOpcodes),'backwards'=>json_encode($backwardsOpcodes)];
 
 			}
 
+			// Storage::disk('fuzzybaird_databasesync')->put($tableKey.'/states/'.$tableKey.'.json', $current);
+
+			dd($old,$current,$backwardsOpcodes, $change);
+
 		}
 
-		return $diffs;
+		return dd($diffs);
 
 	}
 

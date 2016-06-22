@@ -52,7 +52,10 @@ class ColumnsAndTables
 		return $this->tablesWithData;
 	}
 
-
+	public function getTableSchema($table){
+		$result = DB::table($table)->select('SHOW FIELDS');
+		dd($result);
+	}
 	/**
 	 * @param  [Array] list of tables to sync
 	 * @return Tables with columns
