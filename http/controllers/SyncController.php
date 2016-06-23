@@ -47,6 +47,7 @@ public $diff;
 		$settingsTables = $settings->get('tables');
 
 		$tables = $ColumnsAndTables->selectTables($settingsTables)->fetch();
+		dd($tables);
 
 		$newstate = $diff->newState($tables);
 

@@ -251,7 +251,7 @@
             case 'array':
             break;
             default:
-                return "returntype não é valido!";
+                return "returntype not valid!";
             break;
         }
     }
@@ -267,7 +267,7 @@
                 if(is_object($struct1)) {
                     return true;
                 }else{
-                    $problem = "comptype não é válido";
+                    $problem = "comptype not valid";
                     return false;
                 }
             }

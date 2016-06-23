@@ -28,7 +28,9 @@ class ColumnsAndTables
 	    $tables = DB::select('SHOW TABLES');
 	    $tablesAndColumns = [];
 	    foreach ($tables as $table) {
-	    	$tablesAndColumns[$table->$database] = DB::getSchemaBuilder()->getColumnListing($table->$database);
+	    	
+	    	$tablesAndColumns[$table->$database]['tables'] = DB::getSchemaBuilder()->getColumnListing($table->$database);
+	    	$tablesAndColumns[$table->$database]['schema'] = self::getTableSchema($table);
 	    }
 	    return $tablesAndColumns;
 	}
@@ -52,9 +54,10 @@ class ColumnsAndTables
 		return $this->tablesWithData;
 	}
 
-	public function getTableSchema($table){
-		$result = DB::table($table)->select('SHOW FIELDS');
-		dd($result);
+	public static function getTableSchema($table){
+		$database = 'Tables_in_'.Config::get('database.connections.'.Config::get('database.default').'.database');
+		$result = DB::select('describe '.$table->$database);
+		// dd($result);
 	}
 	/**
 	 * @param  [Array] list of tables to sync
