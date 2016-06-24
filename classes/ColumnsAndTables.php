@@ -53,6 +53,10 @@ class ColumnsAndTables
 	}
 
 	public static function getTableSchema($table){
+		if (is_string($table)) {
+			$result = DB::select('describe '.$table);
+			return $result;
+		}
 		$database = 'Tables_in_'.Config::get('database.connections.'.Config::get('database.default').'.database');
 		$result = DB::select('describe '.$table->$database);
 		return $result;

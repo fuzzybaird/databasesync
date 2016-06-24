@@ -2,6 +2,7 @@
 use cogpowered\FineDiff\Render\Text;
 use cogpowered\FineDiff\Diff;
 use Fuzzybaird\Databasesync\Classes\treeWalker;
+use Fuzzybaird\Databasesync\Classes\ColumnsAndTables;
 use Kint;
 use Storage;
 use Config;
@@ -93,31 +94,24 @@ class FuzzyDiff
 		$tableKeys = $this->KeyKey($tables);
 		$updatedTables =  $this->updateFolders($tableKeys);
 		foreach ($tables as $tableKey => $tableValue) {
-			if (!Storage::disk('fuzzybaird_databasesync')->exists($tableKey.'/states/'.$tableKey.'.json')) {
+			if (!Storage::disk('fuzzybaird_databasesync')->exists($tableKey.'/states/'.$tableKey)) {
 				$current = json_encode($tableValue);
 				Storage::disk('fuzzybaird_databasesync')->makeDirectory($tableKey.'/changes');
-				Storage::disk('fuzzybaird_databasesync')->put($tableKey.'/states/'.$tableKey.'.json', $current);
+				Storage::disk('fuzzybaird_databasesync')->put($tableKey.'/states/'.$tableKey, $current);
 			}
-			$old = Storage::disk('fuzzybaird_databasesync')->get($tableKey.'/states/'.$tableKey.'.json');
-			// $old = json_decode($old, true);
-
+			$old = Storage::disk('fuzzybaird_databasesync')->get($tableKey.'/states/'.$tableKey);
 			$current = json_encode($tableValue);
 			if(!$tableValue) continue;
-			if($tableKey == 'system_mail_layouts') {
-			$changes = $this->treewalker->getdiff(json_decode($current,true), json_decode($old, true));
-			} else {
-				$changes = $this->treewalker->getdiff($current, $old);
-			}
+			$changes = $this->treewalker->getdiff($current, $old);
 			$df = $changes;
 			if ($df->new || $df->removed || $df->edited) {
-				$diffs[$tableKey] = ['changes' => $changes,'table'=>$tableValue];
-				Storage::disk('fuzzybaird_databasesync')->put($tableKey.'/changes/'.time().'.json', $changes);
+				// dd(ColumnsAndTables::getTableSchema($tableKey));
+				$diffs[$tableKey] = ['changes' => $changes,'schema'=> ColumnsAndTables::getTableSchema($tableKey)];
+				Storage::disk('fuzzybaird_databasesync')->put($tableKey.'/changes/'.time(), json_encode($diffs[$tableKey]));
 			}
-			Storage::disk('fuzzybaird_databasesync')->put($tableKey.'/states/'.$tableKey.'.json', $current);
+			Storage::disk('fuzzybaird_databasesync')->put($tableKey.'/states/'.$tableKey, $current);
 		}
-
 		return $diffs;
-
 	}
 
 
