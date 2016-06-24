@@ -22,7 +22,11 @@ class FuzzyDiff
 
 	public function __construct()
 	{
-		$this->treewalker  = new treeWalker();
+		$this->treewalker  = new treeWalker([
+			    "debug"=>true,
+			    "returntype"=>"obj"
+			]
+		);
 	}
 	public function KeyKey($array) 
 	{	
@@ -104,9 +108,9 @@ class FuzzyDiff
 			} else {
 				$changes = $this->treewalker->getdiff($current, $old);
 			}
-			$df = json_decode($changes);
+			$df = $changes;
 			if ($df->new || $df->removed || $df->edited) {
-				$diffs[$tableKey] = ['changes' => json_decode($changes),'table'=>$tableValue];
+				$diffs[$tableKey] = ['changes' => $changes,'table'=>$tableValue];
 				Storage::disk('fuzzybaird_databasesync')->put($tableKey.'/changes/'.time().'.json', $changes);
 			}
 			Storage::disk('fuzzybaird_databasesync')->put($tableKey.'/states/'.$tableKey.'.json', $current);
