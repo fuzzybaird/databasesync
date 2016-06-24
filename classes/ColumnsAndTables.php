@@ -25,14 +25,12 @@ class ColumnsAndTables
 	public static function all()
 	{
 		$database = 'Tables_in_'.Config::get('database.connections.'.Config::get('database.default').'.database');
-	    $tables = DB::select('SHOW TABLES');
-	    $tablesAndColumns = [];
-	    foreach ($tables as $table) {
-	    	
-	    	$tablesAndColumns[$table->$database]['tables'] = DB::getSchemaBuilder()->getColumnListing($table->$database);
-	    	$tablesAndColumns[$table->$database]['schema'] = self::getTableSchema($table);
-	    }
-	    return $tablesAndColumns;
+		$tables = DB::select('SHOW TABLES');
+		$tablesAndColumns = [];
+		foreach ($tables as $table) {
+			$tablesAndColumns[$table->$database] = self::getTableSchema($table);
+		}
+		return $tablesAndColumns;
 	}
 
 
@@ -57,7 +55,7 @@ class ColumnsAndTables
 	public static function getTableSchema($table){
 		$database = 'Tables_in_'.Config::get('database.connections.'.Config::get('database.default').'.database');
 		$result = DB::select('describe '.$table->$database);
-		// dd($result);
+		return $result;
 	}
 	/**
 	 * @param  [Array] list of tables to sync

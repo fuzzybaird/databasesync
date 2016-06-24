@@ -101,7 +101,7 @@
         private function accessDynamically($path_string, &$array) {
             $keys = explode('/', substr_replace($path_string, "", -1));
             $ref = &$array;
-
+            dd($keys,$path_string, $ref);
             while ($key = array_shift($keys)) {
                 $ref = &$ref[$key];
             }
